@@ -89,4 +89,11 @@ def format_output(*required_keys):
 
 
 def add_method_to_instance(klass):
-    pass
+    def real_wrapper(func):
+        @wraps(func)
+        def inside_wrapper(*args):
+            return func()
+        
+        setattr(klass, func.__name__, inside_wrapper)
+        return func
+    return real_wrapper
