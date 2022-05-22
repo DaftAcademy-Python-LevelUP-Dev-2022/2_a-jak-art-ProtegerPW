@@ -50,16 +50,42 @@ def sums_of_str_elements_are_equal(func):
                     
     return inside_wrapper
 
-
-                    
-
-                
-            
-        
-
-
 def format_output(*required_keys):
-    pass
+    def real_wrapper(func):
+        def insider_wrapper(*args):
+            got_dict = func(*args)
+            
+            list_of_keys = []
+            for record in required_keys:
+                for result in record.split('__'):
+                    list_of_keys.append(result)
+                    
+            list_of_values = []
+            help_dict = {}
+            for key in list_of_keys:
+                if(key in got_dict):
+                    dict_value = got_dict.get(key)
+                    if dict_value == '':
+                        help_dict[key] = "Empty value"
+                    else:
+                       help_dict[key] = dict_value
+                else:
+                    raise ValueError
+            
+            help_list = [record.split('__') for record in required_keys]
+            response_dict = {}
+            
+            for record in help_list:
+                if len(record) > 1:
+                    value_list = [help_dict.get(key) for key in record]
+                    response_dict['__'.join(record)] = ' '.join(value_list)
+                else:
+                    response_dict[record[0]] = help_dict.get(record[0])
+                    
+            return response_dict                  
+        return insider_wrapper
+    return real_wrapper
+        
 
 
 def add_method_to_instance(klass):
